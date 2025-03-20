@@ -79,17 +79,16 @@ def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
         return {"min": None, "max": None}
 
 # 📝 Endpoint principal pour traiter le texte et extraire le profil d'orientation
+# 📝 Endpoint principal pour traiter le texte et extraire le profil d'orientation
 @app.post("/process-text", response_model=OrientationProfile)
 async def process_text(input: TextInput):
     try:
+        # Nettoyage du texte
         text = clean_text(input.text)
 
         # 🔹 Construction du prompt pour Cohere
         prompt = f"""
-        Analyse ce texte et extrait uniquement les informations suivantes en format JSON valide.
-        Réponds strictement avec ce format JSON sans ajouter de texte superflu.
-
-        ```json
+        Analyse ce texte et extrait uniquement les informations suivantes en format JSON, sans ajouter de texte explicatif :
         {{
             "firstName": null,
             "lastName": null,
@@ -109,36 +108,32 @@ async def process_text(input: TextInput):
             "desiredFocus": null,
             "previousExperience": null
         }}
-        ```
 
-        Si une information est absente, laisse `null` à la place.
+        Si une information est absente, laisse `null` à la place.  
         Voici le texte à analyser : {text}
         """
 
-        # 🔹 Appel Cohere pour générer une réponse
-        response = co.generate(prompt=prompt, max_tokens=300)
+        # Appel à Cohere
+        response = co.generate(prompt=prompt, max_tokens=200)
         extracted_info = response.generations[0].text.strip()
 
-        # 🔹 Extraction sécurisée du JSON
-        extracted_json = re.search(r"```json\n(.*?)\n```", extracted_info, re.DOTALL)
-        if extracted_json:
-            extracted_info = extracted_json.group(1)
+        # 📌 Log uniquement la réponse brute de l'IA
+        print("📥 Réponse brute de Cohere :", extracted_info)
 
-        # 🔹 Conversion en JSON
+        # Conversion de la réponse JSON
         profile_data = json.loads(extracted_info)
 
-        # 🔹 Extraction des budgets avec conversion texte → nombre
-        formation_budget = extract_budgets(profile_data.get("fee", {}).get("formation", ""))
-        logement_budget = extract_budgets(profile_data.get("fee", {}).get("logement", ""))
-
-        # 🔹 Création du profil
+        # Création du profil d'orientation
         profile = OrientationProfile(
             firstName=profile_data.get("firstName"),
             lastName=profile_data.get("lastName"),
             telephone=profile_data.get("telephone"),
             email=profile_data.get("email"),
             preferredSubjects=profile_data.get("preferredSubjects"),
-            fee={"formation": formation_budget, "logement": logement_budget},
+            fee={
+                "formation": extract_budgets(profile_data.get("fee", {}).get("formation")),
+                "logement": extract_budgets(profile_data.get("fee", {}).get("logement"))
+            },
             address=profile_data.get("address", {"city": None, "region": None, "country": None}),
             skills=profile_data.get("skills"),
             desiredFocus=profile_data.get("desiredFocus"),
@@ -148,10 +143,10 @@ async def process_text(input: TextInput):
         return profile
 
     except json.JSONDecodeError as e:
-        print("Erreur JSON :", e)
+        print("❌ Erreur lors de la conversion en JSON :", e)
         raise HTTPException(status_code=500, detail="Erreur dans l'analyse JSON de la réponse de Cohere.")
     except Exception as e:
-        print("Erreur inattendue :", e)
+        print("❌ Une erreur inattendue est survenue :", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 # 🔹 Exécution locale
