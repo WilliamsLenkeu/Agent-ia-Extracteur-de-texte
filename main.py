@@ -44,31 +44,38 @@ def clean_text(text: str) -> str:
     text = re.sub(r'\s+', ' ', text)
     return text
 
-# 🔹 Fonction pour extraire les budgets en chiffres uniquement
+# 🔹 Fonction pour extraire les budgets sous forme numérique
 def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
     if not budget_str:
         return {"min": None, "max": None}
 
-    # Extraction des nombres sous forme numérique uniquement
+    # Vérifier si le budget est une plage
+    if 'to' in budget_str or '-' in budget_str:
+        # Extraire les deux nombres et les convertir en entiers
+        budget_values = re.findall(r'\d+', budget_str)
+        if len(budget_values) == 2:
+            return {"min": int(budget_values[0]), "max": int(budget_values[1])}
+    
+    # Si ce n'est pas une plage, tenter de convertir un seul nombre
     budget_values = re.findall(r'\d+', budget_str)
-
-    # Conversion en entier
-    budget_values = [int(value) for value in budget_values]
-
-    if len(budget_values) >= 2:
-        return {"min": min(budget_values), "max": max(budget_values)}
-    elif len(budget_values) == 1:
-        return {"min": budget_values[0], "max": budget_values[0]}
-    else:
-        return {"min": None, "max": None}
+    if budget_values:
+        return {"min": int(budget_values[0]), "max": int(budget_values[0])}
+    
+    return {"min": None, "max": None}
 
 # 🔹 Fonction pour nettoyer la réponse brute de Cohere
 def clean_response(response: str) -> str:
     # Enlever les retours à la ligne et espaces inutiles
     response = response.replace("\n", " ").strip()
-    # Échapper les guillemets non fermés
-    response = re.sub(r'(\w)(?=\s*[:{}])', r'\1"', response)
     return response
+
+# 🔹 Fonction pour valider et convertir la réponse en JSON
+def validate_json(response: str):
+    try:
+        return json.loads(response)
+    except json.JSONDecodeError as e:
+        print(f"❌ Erreur JSON: {e}")
+        raise HTTPException(status_code=500, detail="Erreur dans le format JSON de la réponse de Cohere.")
 
 # 📝 Endpoint principal pour traiter le texte et extraire le profil d'orientation
 @app.post("/process-text", response_model=OrientationProfile)
@@ -117,8 +124,8 @@ async def process_text(input: TextInput):
         # 📌 Log de la réponse nettoyée
         print("📥 Réponse brute de Cohere après nettoyage :", cleaned_response)
 
-        # Conversion de la réponse JSON
-        profile_data = json.loads(cleaned_response)
+        # Valider et convertir la réponse nettoyée en JSON
+        profile_data = validate_json(cleaned_response)
 
         # Création du profil d'orientation
         profile = OrientationProfile(
@@ -139,9 +146,6 @@ async def process_text(input: TextInput):
 
         return profile
 
-    except json.JSONDecodeError as e:
-        print("❌ Erreur lors de la conversion en JSON :", e)
-        raise HTTPException(status_code=500, detail="Erreur dans l'analyse JSON de la réponse de Cohere.")
     except Exception as e:
         print("❌ Une erreur inattendue est survenue :", e)
         raise HTTPException(status_code=500, detail=str(e))
