@@ -4,6 +4,7 @@ from typing import Dict, Optional
 import cohere
 import json
 import re
+import logging
 from dotenv import load_dotenv
 import os
 
@@ -22,6 +23,10 @@ co = cohere.Client(COHERE_API_KEY)
 
 # Création de l'application FastAPI
 app = FastAPI()
+
+# Configurer les logs
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Modèle de données représentant le profil d'orientation
 class OrientationProfile(BaseModel):
@@ -69,13 +74,14 @@ async def process_text(input: TextInput):
     try:
         # Nettoyage du texte d'entrée
         text = clean_text(input.text)
+        logger.info(f"Texte nettoyé : {text}")
 
         # 🔹 Construction du prompt pour Cohere avec une sortie JSON stricte
         prompt = f"""
-        Analyse ce texte et extrait uniquement les informations suivantes en format JSON valide.
-        Réponds strictement avec ce format JSON sans ajouter de texte superflu.
+        Analyse ce texte et extrait uniquement les informations suivantes en format JSON valide. 
+        Ne réponds qu'avec ce format JSON, sans ajouter de texte supplémentaire.
 
-        ```json
+        JSON :
         {{
             "firstName": null,
             "lastName": null,
@@ -95,14 +101,14 @@ async def process_text(input: TextInput):
             "desiredFocus": null,
             "previousExperience": null
         }}
-        ```
 
-        Si une information est absente, laisse `null` à la place.
         Voici le texte à analyser : {text}
         """
 
         # 🔹 Appel à Cohere pour générer une réponse
         response = co.generate(prompt=prompt, max_tokens=300)
+        logger.info(f"Réponse de l'IA : {response.generations[0].text.strip()}")
+
         extracted_info = response.generations[0].text.strip()
 
         # 🔹 Extraction sécurisée du JSON
@@ -134,10 +140,10 @@ async def process_text(input: TextInput):
         return profile
 
     except json.JSONDecodeError as e:
-        print("Erreur lors de la conversion en JSON :", e)
+        logger.error(f"Erreur lors de la conversion en JSON : {e}")
         raise HTTPException(status_code=500, detail="Erreur dans l'analyse JSON de la réponse de Cohere.")
     except Exception as e:
-        print("Une erreur inattendue est survenue :", e)
+        logger.error(f"Une erreur inattendue est survenue : {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # 🔹 Exécution locale de l'API
