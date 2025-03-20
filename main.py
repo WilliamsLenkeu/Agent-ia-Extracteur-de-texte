@@ -6,8 +6,6 @@ import json
 import re
 from dotenv import load_dotenv
 import os
-import inflect
-import word2number.w2n as w2n
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -46,27 +44,13 @@ def clean_text(text: str) -> str:
     text = re.sub(r'\s+', ' ', text)
     return text
 
-# 🔹 Fonction pour convertir un texte en nombre
-def text_to_number(text: str) -> int:
-    try:
-        return w2n.word_to_num(text.lower())
-    except ValueError:
-        return None  # Retourne None si la conversion échoue
-
-# 🔹 Fonction pour extraire les budgets même s'ils sont en lettres
+# 🔹 Fonction pour extraire les budgets en chiffres uniquement (sans gestion des nombres en lettres)
 def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
     if not budget_str:
         return {"min": None, "max": None}
 
-    # Extraction des nombres sous forme numérique
+    # Extraction des nombres sous forme numérique uniquement
     budget_values = re.findall(r'\d+', budget_str)
-
-    # Extraction des nombres écrits en lettres
-    words_numbers = re.findall(r'([a-zA-Z\s-]+)', budget_str)
-    for word in words_numbers:
-        num = text_to_number(word)
-        if num is not None:
-            budget_values.append(str(num))
 
     # Conversion en entier
     budget_values = [int(value) for value in budget_values]
@@ -78,7 +62,6 @@ def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
     else:
         return {"min": None, "max": None}
 
-# 📝 Endpoint principal pour traiter le texte et extraire le profil d'orientation
 # 📝 Endpoint principal pour traiter le texte et extraire le profil d'orientation
 @app.post("/process-text", response_model=OrientationProfile)
 async def process_text(input: TextInput):
