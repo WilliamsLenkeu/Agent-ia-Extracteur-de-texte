@@ -73,22 +73,31 @@ async def process_text(input: TextInput):
 
         # 🔹 Construction du prompt pour Cohere
         prompt = f"""
-        Analyse ce texte et extrait les informations suivantes en format JSON :
-        - Prénom et nom
-        - Sujets préférés
-        - Ville, région et pays
-        - Compétences
-        - Téléphone
-        - E-mail
-        - Budget pour la formation
-        - Budget mensuel pour le logement
-        - Focus désiré
-        - Expérience précédente
+        Analyse ce texte et extrait uniquement les informations suivantes en format JSON, sans ajouter de texte explicatif :
+        {{
+            "firstName": null,
+            "lastName": null,
+            "preferredSubjects": null,
+            "address": {{
+                "city": null,
+                "region": null,
+                "country": null
+            }},
+            "skills": null,
+            "telephone": null,
+            "email": null,
+            "fee": {{
+                "formation": null,
+                "logement": null
+            }},
+            "desiredFocus": null,
+            "previousExperience": null
+        }}
 
-        Si une information manque, mets `null` à la place.
-
+        Si une information est absente, laisse `null` à la place.  
         Voici le texte à analyser : {text}
         """
+
 
         # Appel à Cohere pour générer une réponse basée sur le prompt
         response = co.generate(prompt=prompt, max_tokens=200)
