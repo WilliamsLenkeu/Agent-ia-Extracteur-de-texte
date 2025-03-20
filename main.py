@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 import cohere
 import json
 import re
@@ -27,23 +27,23 @@ app = FastAPI()
 class OrientationProfile(BaseModel):
     firstName: Optional[str] = None
     lastName: Optional[str] = None
-    telephone: Optional[str] = None  # Changement de "phoneNumbers" à "telephone"
+    telephone: Optional[str] = None
     email: Optional[str] = None
     preferredSubjects: Optional[str] = None
     fee: Dict[str, Dict[str, Optional[int]]] = {"formation": {"min": None, "max": None}, "logement": {"min": None, "max": None}}
     address: Dict[str, Optional[str]] = {"city": None, "region": None, "country": None}
     skills: Optional[str] = None
-    desiredFocus: Optional[str] = None  # Nouveau champ pour le focus désiré
-    previousExperience: Optional[str] = None  # Nouveau champ pour l'expérience précédente
+    desiredFocus: Optional[str] = None
+    previousExperience: Optional[str] = None
 
 # Modèle pour la réception de texte brut
 class TextInput(BaseModel):
     text: str
 
-# 🔹 Fonction pour nettoyer et préparer le texte
+# 🔹 Fonction pour nettoyer le texte
 def clean_text(text: str) -> str:
-    text = text.strip().replace("\n", " ")  # Supprimer les retours à la ligne et les espaces au début/fin
-    text = re.sub(r'\s+', ' ', text)  # Remplacer les espaces multiples par un seul espace
+    text = text.strip().replace("\n", " ")
+    text = re.sub(r'\s+', ' ', text)
     return text
 
 # 🔹 Fonction pour extraire les informations de budget
@@ -51,14 +51,13 @@ def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
     if not budget_str:
         return {"min": None, "max": None}
 
-    # On extrait les valeurs numériques du texte
     budget_values = re.findall(r'\d+', budget_str)
     if len(budget_values) >= 2:
         min_budget = int(budget_values[0])
         max_budget = int(budget_values[1])
     elif len(budget_values) == 1:
         min_budget = int(budget_values[0])
-        max_budget = int(budget_values[0])  # Si une seule valeur, on la met à la fois en min et max
+        max_budget = int(budget_values[0])
     else:
         min_budget, max_budget = None, None
 
@@ -68,12 +67,15 @@ def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
 @app.post("/process-text", response_model=OrientationProfile)
 async def process_text(input: TextInput):
     try:
-        # On commence par nettoyer le texte brut
+        # Nettoyage du texte d'entrée
         text = clean_text(input.text)
 
-        # 🔹 Construction du prompt pour Cohere
+        # 🔹 Construction du prompt pour Cohere avec une sortie JSON stricte
         prompt = f"""
-        Analyse ce texte et extrait uniquement les informations suivantes en format JSON, sans ajouter de texte explicatif :
+        Analyse ce texte et extrait uniquement les informations suivantes en format JSON valide.
+        Réponds strictement avec ce format JSON sans ajouter de texte superflu.
+
+        ```json
         {{
             "firstName": null,
             "lastName": null,
@@ -93,25 +95,27 @@ async def process_text(input: TextInput):
             "desiredFocus": null,
             "previousExperience": null
         }}
+        ```
 
-        Si une information est absente, laisse `null` à la place.  
+        Si une information est absente, laisse `null` à la place.
         Voici le texte à analyser : {text}
         """
 
-
-        # Appel à Cohere pour générer une réponse basée sur le prompt
-        response = co.generate(prompt=prompt, max_tokens=200)
+        # 🔹 Appel à Cohere pour générer une réponse
+        response = co.generate(prompt=prompt, max_tokens=300)
         extracted_info = response.generations[0].text.strip()
 
-        # 🔹 Affichage de la réponse brute pour débogage
-        print("Réponse brute de Cohere :", extracted_info)
+        # 🔹 Extraction sécurisée du JSON
+        extracted_json = re.search(r"```json\n(.*?)\n```", extracted_info, re.DOTALL)
+        if extracted_json:
+            extracted_info = extracted_json.group(1)
 
-        # 🔹 Tentative de conversion de la réponse en format JSON
+        # 🔹 Conversion en JSON
         profile_data = json.loads(extracted_info)
 
-        # 🔹 Extraction des informations de budget (formation et logement)
-        formation_budget = extract_budgets(profile_data.get("budget"))
-        logement_budget = extract_budgets(profile_data.get("monthlyBudget"))
+        # 🔹 Extraction des budgets formation et logement
+        formation_budget = extract_budgets(profile_data.get("fee", {}).get("formation"))
+        logement_budget = extract_budgets(profile_data.get("fee", {}).get("logement"))
 
         # 🔹 Création du profil avec les données extraites
         profile = OrientationProfile(
@@ -120,10 +124,7 @@ async def process_text(input: TextInput):
             telephone=profile_data.get("telephone"),
             email=profile_data.get("email"),
             preferredSubjects=profile_data.get("preferredSubjects"),
-            fee={
-                "formation": formation_budget,
-                "logement": logement_budget
-            },
+            fee={"formation": formation_budget, "logement": logement_budget},
             address=profile_data.get("address", {"city": None, "region": None, "country": None}),
             skills=profile_data.get("skills"),
             desiredFocus=profile_data.get("desiredFocus"),
@@ -139,7 +140,7 @@ async def process_text(input: TextInput):
         print("Une erreur inattendue est survenue :", e)
         raise HTTPException(status_code=500, detail=str(e))
 
-# 🔹 Si vous voulez exécuter l'API localement, vous pouvez démarrer avec cette commande
+# 🔹 Exécution locale de l'API
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
