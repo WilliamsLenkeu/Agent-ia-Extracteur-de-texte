@@ -1,5 +1,3 @@
----
-
 # TextExtractor
 
 **TextExtractor** est un agent IA conçu pour extraire et structurer des informations à partir de textes bruts. Il est particulièrement utile pour l'extraction de données telles que les noms, les numéros de téléphone, les adresses e-mail, les budgets, et bien plus encore. Cet agent utilise l'API Cohere pour le traitement du langage naturel (NLP) et FastAPI pour exposer les fonctionnalités via une API REST.
