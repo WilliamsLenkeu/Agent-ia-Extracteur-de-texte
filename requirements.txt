@@ -3,5 +3,3 @@ uvicorn
 cohere
 python-dotenv
 pydantic
-word2number
-inflect
