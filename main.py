@@ -44,7 +44,7 @@ def clean_text(text: str) -> str:
     text = re.sub(r'\s+', ' ', text)
     return text
 
-# 🔹 Fonction pour extraire les budgets en chiffres uniquement (sans gestion des nombres en lettres)
+# 🔹 Fonction pour extraire les budgets en chiffres uniquement
 def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
     if not budget_str:
         return {"min": None, "max": None}
@@ -61,6 +61,14 @@ def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
         return {"min": budget_values[0], "max": budget_values[0]}
     else:
         return {"min": None, "max": None}
+
+# 🔹 Fonction pour nettoyer la réponse brute de Cohere
+def clean_response(response: str) -> str:
+    # Enlever les retours à la ligne et espaces inutiles
+    response = response.replace("\n", " ").strip()
+    # Échapper les guillemets non fermés
+    response = re.sub(r'(\w)(?=\s*[:{}])', r'\1"', response)
+    return response
 
 # 📝 Endpoint principal pour traiter le texte et extraire le profil d'orientation
 @app.post("/process-text", response_model=OrientationProfile)
@@ -101,10 +109,16 @@ async def process_text(input: TextInput):
         extracted_info = response.generations[0].text.strip()
 
         # 📌 Log uniquement la réponse brute de l'IA
-        print("📥 Réponse brute de Cohere :", extracted_info)
+        print("📥 Réponse brute de Cohere avant nettoyage :", extracted_info)
+
+        # Nettoyer la réponse brute avant de la convertir en JSON
+        cleaned_response = clean_response(extracted_info)
+
+        # 📌 Log de la réponse nettoyée
+        print("📥 Réponse brute de Cohere après nettoyage :", cleaned_response)
 
         # Conversion de la réponse JSON
-        profile_data = json.loads(extracted_info)
+        profile_data = json.loads(cleaned_response)
 
         # Création du profil d'orientation
         profile = OrientationProfile(
