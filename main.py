@@ -104,6 +104,9 @@ async def process_text(input: TextInput):
         # 🔹 Appel à Cohere pour générer une réponse
         response = co.generate(prompt=prompt, max_tokens=300)
         extracted_info = response.generations[0].text.strip()
+        
+        # 📌 Log uniquement la réponse brute de l'IA
+        print("📥 Réponse brute de Cohere avant nettoyage :", extracted_info)
 
         # 🔹 Extraction sécurisée du JSON
         extracted_json = re.search(r"```json\n(.*?)\n```", extracted_info, re.DOTALL)
