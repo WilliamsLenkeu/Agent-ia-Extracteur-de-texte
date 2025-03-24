@@ -1,6 +1,6 @@
-# TextExtractor
+# MonAgent
 
-**TextExtractor** est un agent IA conçu pour extraire et structurer des informations à partir de textes bruts. Il est particulièrement utile pour l'extraction de données telles que les noms, les numéros de téléphone, les adresses e-mail, les budgets, et bien plus encore. Cet agent utilise l'API Cohere pour le traitement du langage naturel (NLP) et FastAPI pour exposer les fonctionnalités via une API REST.
+**MonAgent** est un agent IA conçu pour extraire et structurer des informations à partir de textes bruts. Il est particulièrement utile pour l'extraction de données telles que les noms, les numéros de téléphone, les adresses e-mail, les budgets, et bien plus encore. Cet agent utilise l'API Cohere pour le traitement du langage naturel (NLP) et FastAPI pour exposer les fonctionnalités via une API REST.
 
 ---
 
@@ -52,13 +52,31 @@
 
 ### Lancer l'API
 
-Pour démarrer l'API, exécutez la commande suivante :
+Pour démarrer l'API en mode développement avec rechargement automatique :
 
 ```bash
 uvicorn main:app --reload
 ```
 
-L'API sera disponible à l'adresse : `http://127.0.0.1:8000`.
+L'API sera disponible à l'adresse locale : `http://127.0.0.1:8000`
+
+Pour rendre l'API accessible sur votre réseau local (par exemple pour la tester depuis un autre appareil) :
+
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Dans ce cas, l'API sera accessible :
+- Localement : `http://127.0.0.1:8000`
+- Sur le réseau local via l'adresse IP de votre machine
+
+#### Comment trouver votre adresse IP locale :
+- **Windows** : Exécutez `ipconfig` dans l'invite de commandes et cherchez "IPv4 Address"
+- **macOS/Linux** : Exécutez `ifconfig` (ou `ip a` sur certaines distributions) et cherchez "inet" (souvent sous wlan0 pour WiFi ou eth0 pour Ethernet)
+
+Par exemple, si votre adresse IP est `192.168.1.20`, l'API sera accessible via : `http://192.168.1.20:8000`
+
+> **Important** : Pour des raisons de sécurité, ne partagez pas cette adresse en dehors de votre réseau local et n'utilisez pas ce mode en production.
 
 ### Tester l'agent
 
