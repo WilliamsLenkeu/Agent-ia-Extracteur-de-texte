@@ -1,0 +1,55 @@
+2025-03-24 19:34:59,564 - main - INFO - Requête reçue: POST http://0.0.0.0:8000/api/orientation/process-text
+2025-03-24 19:34:59,587 - app.api.endpoints.orientation - INFO - Début du traitement pour le texte: Bonjour, je m'appelle Léa Martin et je suis passio...
+2025-03-24 19:34:59,597 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere avec un texte de 920 caractères
+2025-03-24 19:35:07,391 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-24 19:35:07,402 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": "L\u00e9a",
+  "lastName": "Martin",
+  "telephone": "+33 6 12 34 56 78",
+  "email": "lea.martin@example.com",
+  "preferredSubjects": "sciences de l'environnement, \u00e9nergies renouvelables",
+  "fee": {
+    "formation": {
+      "min": 5000,
+      "max": 7000
+    },
+    "logement": {
+      "min": 600,
+      "max": 800
+    }
+  },
+  "address": {
+    "city": "Lyon",
+    "region": "Rh\u00f4ne",
+    "country": "France"
+  },
+  "skills": "analyse de donn\u00e9es, gestion de projet, communication scientifique",
+  "desiredFocus": "transition \u00e9nerg\u00e9tique",
+  "previousExperience": "projet li\u00e9 \u00e0 l'\u00e9nergie solaire, gestion des d\u00e9chets"
+}
+2025-03-24 19:35:07,403 - app.api.endpoints.orientation - INFO - Données parsées avec succès: {
+  "firstName": "L\u00e9a",
+  "lastName": "Martin",
+  "telephone": "+33 6 12 34 56 78",
+  "email": "lea.martin@example.com",
+  "preferredSubjects": "sciences de l'environnement, \u00e9nergies renouvelables",
+  "fee": {
+    "formation": {
+      "min": 5000,
+      "max": 7000
+    },
+    "logement": {
+      "min": 600,
+      "max": 800
+    }
+  },
+  "address": {
+    "city": "Lyon",
+    "region": "Rh\u00f4ne",
+    "country": "France"
+  },
+  "skills": "analyse de donn\u00e9es, gestion de projet, communication scientifique",
+  "desiredFocus": "transition \u00e9nerg\u00e9tique",
+  "previousExperience": "projet li\u00e9 \u00e0 l'\u00e9nergie solaire, gestion des d\u00e9chets"
+}
+2025-03-24 19:35:07,417 - main - INFO - Réponse envoyée: 200

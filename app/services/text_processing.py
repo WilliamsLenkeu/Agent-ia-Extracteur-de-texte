@@ -6,8 +6,11 @@ from typing import Dict, Optional  # Ajout de Optional ici
 logger = logging.getLogger(__name__)
 
 def clean_text(text: str) -> str:
-    text = text.strip().replace("\n", " ")
-    return re.sub(r'\s+', ' ', text)
+    logger.debug(f"Nettoyage du texte original: {text[:100]}...")
+    cleaned = text.strip().replace("\n", " ")
+    cleaned = re.sub(r'\s+', ' ', cleaned)
+    logger.debug(f"Texte nettoyé: {cleaned[:100]}...")
+    return cleaned
 
 def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
     if not budget_str:
@@ -24,6 +27,7 @@ def extract_budgets(budget_str: str) -> Dict[str, Optional[int]]:
 
 def parse_cohere_response(response_text: str) -> dict:
     try:
+        logger.debug(f"Parsing de la réponse: {response_text[:200]}...")
         # Extraction plus robuste du JSON
         json_str = re.search(r'\{.*\}', response_text, re.DOTALL)
         if not json_str:
@@ -43,7 +47,8 @@ def parse_cohere_response(response_text: str) -> dict:
             if field in data and data[field]:
                 data[field] = data[field].strip().replace('"', '')
         
+        logger.info(f"Parsing réussi: {json.dumps(data, indent=2)}")
         return data
     except Exception as e:
-        logger.error(f"Parse error: {str(e)}")
+        logger.error(f"Erreur de parsing: {str(e)} - Réponse originale: {response_text[:500]}", exc_info=True)
         return {}

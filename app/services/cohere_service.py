@@ -40,12 +40,14 @@ def get_orientation_data(text: str) -> str:
     Texte à analyser : {text}
     """
     try:
+        logger.info(f"Envoi d'une requête à Cohere avec un texte de {len(text)} caractères")
         response = co.generate(
             prompt=prompt,
             max_tokens=600,  # Augmenté pour les longs textes
             temperature=0.2  # Plus précis
         )
+        logger.debug(f"Réponse reçue de Cohere: {response.generations[0].text[:200]}...")
         return response.generations[0].text.strip()
     except Exception as e:
-        logger.error(f"Cohere error: {str(e)}")
+        logger.error(f"Erreur Cohere: {str(e)} - Texte envoyé: {text[:200]}...", exc_info=True)
         raise
