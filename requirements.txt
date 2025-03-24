@@ -3,3 +3,5 @@ uvicorn
 cohere
 python-dotenv
 pydantic
+python-jose
+passlib

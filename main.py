@@ -1,19 +1,22 @@
 from fastapi import FastAPI
-from routes import profile, suggestions
-import logging
+from app.api.router import api_router
+from config.security import add_cors_middleware
+from config.settings import settings
 
-# Configuration du logger
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+app = FastAPI(
+    title="Orientation API",
+    description="API ouverte pour l'orientation scolaire/professionnelle",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url=None
+)
 
-# Création de l'application FastAPI
-app = FastAPI(title="API Orientation", description="Analyse de texte pour l'orientation scolaire")
+# Configuration CORS uniquement
+app = add_cors_middleware(app)
 
 # Inclusion des routes
-app.include_router(profile.router)
-app.include_router(suggestions.router)
+app.include_router(api_router, prefix="/api")
 
-# Point d'entrée pour exécuter l'API
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
