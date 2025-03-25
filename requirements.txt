@@ -1,8 +1,22 @@
+# Infrastructure de base
 fastapi
 uvicorn
-cohere
 python-dotenv
+python-multipart
+
+# Services externes
+cohere
+
+# Traitement de documents
+PyMuPDF
+python-docx
+pytesseract
+Pillow
+opencv-python-headless  # Pour le prétraitement d'images
+
+# Validation et configuration
 pydantic
-python-jose
-passlib
 pydantic_settings
+
+# Utilitaires
+numpy  # Requis pour le traitement d'images

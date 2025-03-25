@@ -273,3 +273,83 @@
 }
 2025-03-25 14:32:49,886 - app.api.endpoints.orientation - INFO - Traitement réussi
 2025-03-25 14:32:49,890 - main - INFO - Réponse POST http://192.168.1.151:8000/api/orientation/process-text - Statut: 200
+2025-03-25 14:46:15,807 - main - INFO - L'API a démarré avec succès
+2025-03-25 14:52:29,147 - main - INFO - L'API a démarré avec succès
+2025-03-25 14:54:33,408 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 14:54:33,435 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 14:58:51,748 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 14:58:51,758 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:02:44,496 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:02:50,885 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:02:50,921 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:02:52,637 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:02:58,468 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:02:58,481 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:15:08,670 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:16:55,758 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:16:56,211 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 200
+2025-03-25 15:17:21,906 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:17:21,926 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:24:48,712 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:24:51,533 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:24:51,576 - app.api.endpoints.text_extraction - ERROR - Erreur de traitement: name 'time' is not defined
+Traceback (most recent call last):
+  File "C:\Users\willi\OneDrive\Documents\DEV-SPACE\python\orientation-agent\Agent_IA\app\api\endpoints\text_extraction.py", line 38, in extract_text
+    start_time = time.time()
+                 ^^^^
+NameError: name 'time' is not defined. Did you forget to import 'time'?
+2025-03-25 15:24:51,597 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 500
+2025-03-25 15:26:42,520 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:26:47,940 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:26:47,955 - app.services.file_processing - INFO - Lancement de l'OCR pour PDF...
+2025-03-25 15:26:47,971 - app.services.file_processing - ERROR - Erreur PDF: Unable to get page count. Is poppler installed and in PATH?
+2025-03-25 15:26:47,975 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:31:00,638 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:31:14,908 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:31:14,924 - app.services.file_processing - INFO - Lancement de l'OCR pour PDF...
+2025-03-25 15:31:17,105 - app.services.file_processing - ERROR - Erreur OCR: tesseract is not installed or it's not in your PATH. See README file for more information.
+2025-03-25 15:31:17,116 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:33:34,281 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:35:00,008 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:35:10,514 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:35:10,533 - app.services.file_processing - INFO - Aucun texte trouvé, tentative avec OCR...
+2025-03-25 15:35:10,776 - app.services.file_processing - ERROR - Erreur OCR: tesseract is not installed or it's not in your PATH. See README file for more information.
+2025-03-25 15:35:10,784 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:36:20,504 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:36:20,558 - app.services.file_processing - ERROR - Erreur OCR: tesseract is not installed or it's not in your PATH. See README file for more information.
+2025-03-25 15:36:20,562 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:36:31,141 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:36:31,213 - app.services.file_processing - ERROR - Erreur OCR: tesseract is not installed or it's not in your PATH. See README file for more information.
+2025-03-25 15:36:31,214 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:40:43,556 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:40:47,202 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:40:47,205 - app.services.file_processing - DEBUG - Extraction de texte depuis une image.
+2025-03-25 15:40:47,252 - app.services.file_processing - DEBUG - Amélioration de l'image pour OCR.
+2025-03-25 15:40:47,258 - app.services.file_processing - DEBUG - Amélioration de l'image réussie.
+2025-03-25 15:40:47,309 - app.services.file_processing - ERROR - Erreur OCR image: tesseract is not installed or it's not in your PATH. See README file for more information.
+2025-03-25 15:40:47,322 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
+2025-03-25 15:43:13,454 - main - INFO - L'API a démarré avec succès
+2025-03-25 15:43:50,768 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:43:50,783 - app.services.file_processing - DEBUG - Extraction de texte depuis une image.
+2025-03-25 15:43:50,852 - app.services.file_processing - DEBUG - Amélioration de l'image pour OCR.
+2025-03-25 15:43:50,864 - app.services.file_processing - DEBUG - Amélioration de l'image réussie.
+2025-03-25 15:43:55,734 - app.services.file_processing - DEBUG - Texte extrait de l'image: + Ajouter un document |
+1@gmail.com_toi@toi.com >
+-toi@toi.com
+_yvannjanko84@gmail .com
+moi@moi .com...
+2025-03-25 15:43:55,748 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 200
+2025-03-25 15:44:29,791 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:44:29,800 - app.services.file_processing - DEBUG - Extraction de texte depuis une image.
+2025-03-25 15:44:29,801 - app.services.file_processing - DEBUG - Amélioration de l'image pour OCR.
+2025-03-25 15:44:29,814 - app.services.file_processing - DEBUG - Amélioration de l'image réussie.
+2025-03-25 15:44:31,814 - app.services.file_processing - DEBUG - Texte extrait de l'image: It looks like some files for Wallpaper Engine could not be installed. This
+can happen due to downloa...
+2025-03-25 15:44:31,817 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 200
+2025-03-25 15:44:51,250 - main - INFO - Requête POST http://0.0.0.0:8000/api/text-extraction/extract-text - Client: 127.0.0.1
+2025-03-25 15:44:51,284 - app.services.file_processing - DEBUG - Extraction de texte depuis un PDF.
+2025-03-25 15:44:51,334 - app.services.file_processing - DEBUG - Page 0 sans texte, OCR utilisé.
+2025-03-25 15:44:51,628 - app.services.file_processing - DEBUG - Extraction de texte depuis une image.
+2025-03-25 15:44:52,050 - app.services.file_processing - ERROR - Erreur OCR image: cannot identify image file <_io.BytesIO object at 0x000002A1E343BBF0>
+2025-03-25 15:44:52,051 - app.services.file_processing - ERROR - Erreur PDF: 422: Échec de la reconnaissance de texte dans l'image
+2025-03-25 15:44:52,056 - main - INFO - Réponse POST http://0.0.0.0:8000/api/text-extraction/extract-text - Statut: 422
