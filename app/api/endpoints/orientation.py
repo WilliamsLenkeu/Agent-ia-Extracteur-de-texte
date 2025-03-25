@@ -1,6 +1,6 @@
 import json
 import logging
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from app.models.schemas import OrientationProfile
 from app.models.requests import TextInput
 from app.services.cohere_service import get_orientation_data
@@ -12,24 +12,28 @@ logger = logging.getLogger(__name__)
 @router.post("/process-text", response_model=OrientationProfile)
 async def process_text(input: TextInput):
     try:
-        logger.info(f"Début du traitement pour le texte: {input.text[:50]}...")  # Log les 50 premiers caractères
+        logger.info(f"Début du traitement - Taille du texte: {len(input.text)} caractères")
         
         text = clean_text(input.text)
-        logger.debug(f"Texte nettoyé: {text[:100]}...")  # Log debug pour le texte nettoyé
+        if len(text) < 10:
+            logger.warning("Texte nettoyé trop court")
+            raise HTTPException(400, detail="Le texte doit contenir au moins 10 caractères valides")
         
         cohere_response = get_orientation_data(text)
-        logger.debug(f"Réponse brute de Cohere: {cohere_response[:200]}...")  # Log les 200 premiers caractères
-        
         profile_data = parse_cohere_response(cohere_response)
-        logger.info(f"Données parsées avec succès: {json.dumps(profile_data, indent=2)}")
         
+        if not profile_data:
+            logger.error("Échec du parsing de la réponse Cohere")
+            raise HTTPException(422, detail="Impossible d'analyser la réponse de l'IA")
+        
+        logger.info("Traitement réussi")
         return OrientationProfile(**profile_data)
         
-    except json.JSONDecodeError as e:
-        logger.error(f"Erreur de décodage JSON: {str(e)} - Réponse de Cohere: {cohere_response[:500]}", exc_info=True)
-        raise HTTPException(422, "Invalid data format from AI")
     except HTTPException:
-        raise  # On ne logge pas les HTTPException intentionnelles
+        raise  # On laisse passer les HTTPException intentionnelles
+    except json.JSONDecodeError as e:
+        logger.error(f"Erreur JSON: {str(e)}")
+        raise HTTPException(422, detail="Format de données invalide")
     except Exception as e:
-        logger.critical(f"Erreur critique lors du traitement: {str(e)}", exc_info=True)
-        raise HTTPException(500, "Processing failed")
+        logger.critical(f"Erreur critique: {str(e)}", exc_info=True)
+        raise HTTPException(500, detail="Échec du traitement")

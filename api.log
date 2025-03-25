@@ -53,3 +53,223 @@
   "previousExperience": "projet li\u00e9 \u00e0 l'\u00e9nergie solaire, gestion des d\u00e9chets"
 }
 2025-03-24 19:35:07,417 - main - INFO - R�ponse envoy�e: 200
+2025-03-25 13:25:37,417 - main - INFO - L'API a démarré avec succès
+2025-03-25 13:25:46,417 - main - INFO - L'API a démarré avec succès
+2025-03-25 13:27:07,347 - main - INFO - Requête POST http://0.0.0.0:8000/api/orientation/process-text - Client: 127.0.0.1
+2025-03-25 13:27:07,361 - app.api.endpoints.orientation - INFO - Début du traitement - Taille du texte: 920 caractères
+2025-03-25 13:27:07,361 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere - Taille du texte: 920 caractères
+2025-03-25 13:27:15,486 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-25 13:27:15,499 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": "L\u00e9a",
+  "lastName": "Martin",
+  "telephone": "+33 6 12 34 56 78",
+  "email": "lea.martin@example.com",
+  "preferredSubjects": "sciences de l'environnement, \u00e9nergies renouvelables",
+  "fee": {
+    "formation": {
+      "min": 5000,
+      "max": 7000
+    },
+    "logement": {
+      "min": 600,
+      "max": 800
+    }
+  },
+  "address": {
+    "city": "Lyon",
+    "region": "Rh\u00f4ne",
+    "country": "France"
+  },
+  "skills": "analyse de donn\u00e9es, gestion de projet, communication scientifique",
+  "desiredFocus": "transition \u00e9nerg\u00e9tique",
+  "previousExperience": "projet li\u00e9 \u00e0 l'\u00e9nergie solaire, gestion des d\u00e9chets"
+}
+2025-03-25 13:27:15,503 - app.api.endpoints.orientation - INFO - Traitement réussi
+2025-03-25 13:27:15,506 - main - INFO - Réponse POST http://0.0.0.0:8000/api/orientation/process-text - Statut: 200
+2025-03-25 13:38:06,074 - main - INFO - Requête POST http://192.168.1.151:8000/api/orientation/process-text - Client: 192.168.1.135
+2025-03-25 13:38:06,091 - app.api.endpoints.orientation - INFO - Début du traitement - Taille du texte: 596 caractères
+2025-03-25 13:38:06,092 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere - Taille du texte: 596 caractères
+2025-03-25 13:38:13,705 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-25 13:38:13,744 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": "null",
+  "lastName": "null",
+  "telephone": "null",
+  "email": "null",
+  "preferredSubjects": "jeux, d\u00e9veloppement mobile, d\u00e9veloppement backend, full stack, CEO, math\u00e9matiques, informatique, r\u00e9seau, syst\u00e8me, logicielle",
+  "fee": {
+    "formation": {
+      "min": 400000,
+      "max": 400000
+    },
+    "logement": {
+      "min": null,
+      "max": null
+    }
+  },
+  "address": {
+    "city": "null",
+    "region": "r\u00e9gion/pays",
+    "country": "Togo"
+  },
+  "skills": "Flutter, Kotlin, React JS",
+  "desiredFocus": "null",
+  "previousExperience": "baccalaur\u00e9at TI, jeunesse, multiples projets"
+}
+2025-03-25 13:38:13,746 - app.api.endpoints.orientation - INFO - Traitement réussi
+2025-03-25 13:38:13,757 - main - INFO - Réponse POST http://192.168.1.151:8000/api/orientation/process-text - Statut: 200
+2025-03-25 14:16:52,452 - main - INFO - Requête POST http://192.168.1.151:8000/api/orientation/process-text - Client: 192.168.1.135
+2025-03-25 14:16:52,481 - app.api.endpoints.orientation - INFO - Début du traitement - Taille du texte: 149 caractères
+2025-03-25 14:16:52,505 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere - Taille du texte: 149 caractères
+2025-03-25 14:16:58,377 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-25 14:16:58,436 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": null,
+  "lastName": "Yaound\u00e9",
+  "telephone": null,
+  "email": null,
+  "preferredSubjects": "Math, Physics, Science, Programming",
+  "fee": {
+    "formation": {
+      "min": 400,
+      "max": 600
+    },
+    "logement": {
+      "min": 400,
+      "max": 600
+    }
+  },
+  "address": {
+    "city": "Yaound\u00e9",
+    "region": "Centre",
+    "country": "Cameroun"
+  },
+  "skills": "Math, Physics, Science, Programming",
+  "desiredFocus": "Science",
+  "previousExperience": "One year of college"
+}
+2025-03-25 14:16:58,437 - app.api.endpoints.orientation - INFO - Traitement réussi
+2025-03-25 14:16:58,439 - main - INFO - Réponse POST http://192.168.1.151:8000/api/orientation/process-text - Statut: 200
+2025-03-25 14:19:39,644 - main - INFO - Requête POST http://192.168.1.151:8000/api/orientation/process-text - Client: 192.168.1.135
+2025-03-25 14:19:39,648 - app.api.endpoints.orientation - INFO - Début du traitement - Taille du texte: 149 caractères
+2025-03-25 14:19:39,651 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere - Taille du texte: 149 caractères
+2025-03-25 14:19:45,360 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-25 14:19:45,372 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": null,
+  "lastName": "Yaound\u00e9",
+  "telephone": null,
+  "email": null,
+  "preferredSubjects": "Math, Physics, Science, Accounting",
+  "fee": {
+    "formation": {
+      "min": 400,
+      "max": 600
+    },
+    "logement": {
+      "min": 700,
+      "max": 800
+    }
+  },
+  "address": {
+    "city": "Yaound\u00e9",
+    "region": "Centre",
+    "country": "Cameroun"
+  },
+  "skills": "Communication, Organization, Creativity",
+  "desiredFocus": "Science",
+  "previousExperience": "Intern at ABC company, Volunteer at XYZ association"
+}
+2025-03-25 14:19:45,372 - app.api.endpoints.orientation - INFO - Traitement réussi
+2025-03-25 14:19:45,375 - main - INFO - Réponse POST http://192.168.1.151:8000/api/orientation/process-text - Statut: 200
+2025-03-25 14:28:57,142 - main - INFO - Requête POST http://192.168.1.151:8000/api/orientation/process-text - Client: 192.168.1.135
+2025-03-25 14:28:57,151 - app.api.endpoints.orientation - INFO - Début du traitement - Taille du texte: 537 caractères
+2025-03-25 14:28:57,153 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere - Taille du texte: 537 caractères
+2025-03-25 14:29:07,143 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-25 14:29:07,157 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": "null",
+  "lastName": "null",
+  "telephone": "null",
+  "email": "null",
+  "preferredSubjects": "Mobile applications development, Web Development, null",
+  "fee": {
+    "formation": {
+      "min": 400000,
+      "max": 400000
+    },
+    "logement": {
+      "min": null,
+      "max": null
+    }
+  },
+  "address": {
+    "city": "Yaound\u00e9",
+    "region": "centre",
+    "country": "Cameroun"
+  },
+  "skills": "Mobile applications development, Web Development",
+  "desiredFocus": "null",
+  "previousExperience": "null"
+}
+2025-03-25 14:29:07,166 - app.api.endpoints.orientation - INFO - Traitement réussi
+2025-03-25 14:29:07,169 - main - INFO - Réponse POST http://192.168.1.151:8000/api/orientation/process-text - Statut: 200
+2025-03-25 14:31:47,529 - main - INFO - Requête POST http://192.168.1.151:8000/api/orientation/process-text - Client: 192.168.1.135
+2025-03-25 14:31:47,539 - app.api.endpoints.orientation - INFO - Début du traitement - Taille du texte: 537 caractères
+2025-03-25 14:31:47,543 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere - Taille du texte: 537 caractères
+2025-03-25 14:31:53,538 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-25 14:31:53,551 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": "null",
+  "lastName": "null",
+  "telephone": "null",
+  "email": "null",
+  "preferredSubjects": "Mobile applications development, Web Development, null",
+  "fee": {
+    "formation": {
+      "min": 400000,
+      "max": 400000
+    },
+    "logement": {
+      "min": 0,
+      "max": 0
+    }
+  },
+  "address": {
+    "city": "Yaound\u00e9",
+    "region": "centre",
+    "country": "Cameroun"
+  },
+  "skills": "Java, Android, iOS, Mobile applications development, Web Development",
+  "desiredFocus": "Mobile Applications",
+  "previousExperience": "1 year"
+}
+2025-03-25 14:31:53,556 - app.api.endpoints.orientation - INFO - Traitement réussi
+2025-03-25 14:31:53,558 - main - INFO - Réponse POST http://192.168.1.151:8000/api/orientation/process-text - Statut: 200
+2025-03-25 14:32:00,977 - main - INFO - L'API a démarré avec succès
+2025-03-25 14:32:43,941 - main - INFO - Requête POST http://192.168.1.151:8000/api/orientation/process-text - Client: 192.168.1.135
+2025-03-25 14:32:43,946 - app.api.endpoints.orientation - INFO - Début du traitement - Taille du texte: 537 caractères
+2025-03-25 14:32:43,947 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere - Taille du texte: 537 caractères
+2025-03-25 14:32:49,880 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-25 14:32:49,885 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": "null",
+  "lastName": "null",
+  "telephone": "null",
+  "email": "null",
+  "preferredSubjects": "Mobile Applications Development, Web Development, null",
+  "fee": {
+    "formation": {
+      "min": 400000,
+      "max": 400000
+    },
+    "logement": {
+      "min": 0,
+      "max": 0
+    }
+  },
+  "address": {
+    "city": "Yaound\u00e9",
+    "region": "Centre",
+    "country": "Cameroun"
+  },
+  "skills": "Java, Android, iOS, Mobile Applications Development, Web Development",
+  "desiredFocus": "Mobile Applications Development, Web Development",
+  "previousExperience": "1 year"
+}
+2025-03-25 14:32:49,886 - app.api.endpoints.orientation - INFO - Traitement réussi
+2025-03-25 14:32:49,890 - main - INFO - Réponse POST http://192.168.1.151:8000/api/orientation/process-text - Statut: 200

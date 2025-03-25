@@ -1,16 +1,17 @@
 import logging
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from app.api.router import api_router
 from config.security import add_cors_middleware
 from config.settings import settings
 
-# Configuration du logging
+# Configuration avancée du logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler('api.log')  # Écrit aussi dans un fichier
+        logging.FileHandler('api.log', encoding='utf-8')
     ]
 )
 logger = logging.getLogger(__name__)
@@ -23,17 +24,31 @@ app = FastAPI(
     redoc_url=None
 )
 
-# Ajoutez ce middleware pour logger les requêtes
 @app.middleware("http")
-async def log_requests(request, call_next):
-    logger.info(f"Requête reçue: {request.method} {request.url}")
+async def log_requests(request: Request, call_next):
+    logger.info(f"Requête {request.method} {request.url} - Client: {request.client.host}")
     try:
         response = await call_next(request)
-        logger.info(f"Réponse envoyée: {response.status_code}")
+        logger.info(f"Réponse {request.method} {request.url} - Statut: {response.status_code}")
         return response
     except Exception as e:
-        logger.error(f"Erreur non gérée: {str(e)}", exc_info=True)
-        raise
+        logger.error(f"Erreur pour {request.method} {request.url}: {str(e)}", exc_info=True)
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Erreur interne du serveur"}
+        )
+
+# Gestion centralisée des exceptions
+@app.exception_handler(ValueError)
+async def value_error_handler(request: Request, exc: ValueError):
+    logger.warning(f"Erreur de validation: {str(exc)}")
+    return JSONResponse(
+        status_code=400,
+        content={"detail": str(exc)}
+    )
 
 app = add_cors_middleware(app)
 app.include_router(api_router, prefix="/api")
+
+# Log au démarrage
+logger.info("L'API a démarré avec succès")
