@@ -11,6 +11,13 @@ import cv2
 import concurrent.futures
 from functools import partial
 
+# Vérifie que Tesseract est accessible
+try:
+    pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+    pytesseract.get_tesseract_version()
+except Exception as e:
+    raise RuntimeError(f"Tesseract non installé : {str(e)}")
+
 logger = logging.getLogger(__name__)
 
 class TextExtractor:
