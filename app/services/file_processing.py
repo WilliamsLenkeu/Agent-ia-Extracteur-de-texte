@@ -1,124 +1,149 @@
 import logging
 from io import BytesIO
-from typing import Tuple
+from typing import Tuple, List, Optional
 from fastapi import HTTPException
-from PIL import Image, ImageEnhance, ImageOps
+from PIL import Image
 import pytesseract
 import fitz  # PyMuPDF
 from docx import Document
 import numpy as np
 import cv2
+import concurrent.futures
+from functools import partial
 
-# Configuration du logger
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 class TextExtractor:
+    # Configuration optimisée
+    OCR_CONFIG = r'--oem 1 --psm 6 -l fra+eng'  # OCR rapide
+    PDF_DPI = 200  # Résolution réduite
+    MAX_PAGE_SIZE = 1600  # Taille max en pixels
+    PAGE_TIMEOUT = 20  # Secondes par page
+    MAX_WORKERS = 4  # Threads parallèles
+
     @staticmethod
     def enhance_image(image: Image) -> Image:
-        """Améliore la qualité de l'image pour l'OCR avec prétraitement avancé"""
+        """Amélioration d'image optimisée pour l'OCR"""
         try:
-            logger.debug("Début du prétraitement d'image")
-            
-            # Conversion en numpy array
+            # Conversion en niveaux de gris
             img_array = np.array(image.convert('L'))
             
-            # Égalisation d'histogramme adaptative (CLAHE)
-            clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
+            # CLAHE - Amélioration de contraste
+            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
             img_array = clahe.apply(img_array)
             
-            # Détection des bords
-            img_array = cv2.adaptiveThreshold(img_array, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                            cv2.THRESH_BINARY, 11, 2)
+            # Seuillage adaptatif
+            img_array = cv2.adaptiveThreshold(
+                img_array, 255,
+                cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                cv2.THRESH_BINARY, 11, 2
+            )
             
-            # Reconversion en Image PIL
-            enhanced_img = Image.fromarray(img_array)
-            logger.debug("Prétraitement d'image réussi")
-            return enhanced_img
+            return Image.fromarray(img_array)
         except Exception as e:
-            logger.error(f"Erreur de prétraitement d'image: {str(e)}")
+            logger.warning(f"Échec prétraitement: {str(e)}")
             return image
 
     @staticmethod
-    def extract_from_image(file: BytesIO) -> str:
-        """Extrait le texte d'une image avec gestion robuste"""
+    def process_page(page, page_num: int) -> Optional[str]:
+        """Traite une page avec timeout"""
         try:
-            logger.debug("Début d'extraction depuis une image")
-            file.seek(0)
-            image = Image.open(file)
+            # Essai extraction texte standard
+            text = page.get_text("text").strip()
+            if text:
+                return text
+
+            # Fallback OCR pour page scannée
+            pix = page.get_pixmap(dpi=TextExtractor.PDF_DPI)
             
-            # Conversion forcée en mode compatible
-            if image.mode not in ('L', 'RGB'):
-                image = image.convert('RGB')
+            # Réduction de taille si nécessaire
+            if max(pix.width, pix.height) > TextExtractor.MAX_PAGE_SIZE:
+                scale = TextExtractor.MAX_PAGE_SIZE / max(pix.width, pix.height)
+                pix = page.get_pixmap(matrix=fitz.Matrix(scale, scale))
             
-            enhanced = TextExtractor.enhance_image(image)
+            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+            processed_img = TextExtractor.enhance_image(img)
             
-            # Configuration OCR optimisée
-            custom_config = r'--oem 3 --psm 6 -l fra+eng'
-            text = pytesseract.image_to_string(enhanced, config=custom_config)
+            return pytesseract.image_to_string(
+                processed_img,
+                config=TextExtractor.OCR_CONFIG
+            ).strip()
             
-            logger.debug(f"Texte extrait ({len(text)} caractères)")
-            return text.strip()
         except Exception as e:
-            logger.error(f"Échec OCR: {str(e)}", exc_info=True)
-            raise HTTPException(
-                status_code=422,
-                detail="Échec de la reconnaissance de texte dans l'image"
-            )
+            logger.warning(f"Erreur page {page_num}: {str(e)}")
+            return None
 
     @staticmethod
     def extract_from_pdf(file: BytesIO) -> Tuple[str, bool]:
-        """Extrait le texte d'un PDF avec gestion des pages scannées"""
+        """Extraction PDF parallélisée"""
         try:
-            logger.debug("Début d'extraction depuis PDF")
             file.seek(0)
             doc = fitz.open(stream=file.read(), filetype="pdf")
-            text = ""
+            text_parts = []
             ocr_used = False
-
-            for page in doc:
-                # Essai d'extraction texte normal
-                page_text = page.get_text("text")
-                if page_text.strip():
-                    text += page_text + "\n"
-                    continue
+            
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=TextExtractor.MAX_WORKERS
+            ) as executor:
+                futures = {
+                    executor.submit(
+                        TextExtractor.process_page,
+                        page,
+                        num
+                    ): num for num, page in enumerate(doc)
+                }
                 
-                # Fallback OCR pour page scannée
-                logger.debug(f"OCR nécessaire pour la page {page.number}")
-                try:
-                    pix = page.get_pixmap(dpi=300)
-                    img_bytes = pix.tobytes("ppm")
-                    
-                    with BytesIO(img_bytes) as img_buffer:
-                        ocr_text = TextExtractor.extract_from_image(img_buffer)
-                        if ocr_text:
-                            text += ocr_text + "\n"
+                for future in concurrent.futures.as_completed(futures):
+                    result = future.result()
+                    if result:
+                        text_parts.append(result)
+                        if futures[future] > 0:  # Vérifie si OCR utilisé
                             ocr_used = True
-                except Exception as ocr_error:
-                    logger.warning(f"Échec OCR page {page.number}: {str(ocr_error)}")
-                    continue
 
-            logger.debug(f"Extraction PDF terminée - OCR utilisé: {ocr_used}")
-            return text.strip(), ocr_used
+            return "\n".join(text_parts), ocr_used
+            
         except Exception as e:
             logger.error(f"Erreur PDF: {str(e)}", exc_info=True)
             raise HTTPException(
                 status_code=422,
-                detail="Échec de l'extraction du document PDF"
+                detail="Erreur d'extraction PDF"
+            )
+
+    @staticmethod
+    def extract_from_image(file: BytesIO) -> str:
+        """Extraction depuis image avec gestion d'erreur"""
+        try:
+            file.seek(0)
+            image = Image.open(file)
+            
+            if image.mode not in ('L', 'RGB'):
+                image = image.convert('RGB')
+            
+            processed_img = TextExtractor.enhance_image(image)
+            text = pytesseract.image_to_string(
+                processed_img,
+                config=TextExtractor.OCR_CONFIG
+            )
+            return text.strip()
+        except Exception as e:
+            logger.error(f"Erreur image: {str(e)}")
+            raise HTTPException(
+                status_code=422,
+                detail="Échec reconnaissance texte"
             )
 
     @staticmethod
     def extract_from_word(file: BytesIO) -> Tuple[str, bool]:
-        """Extrait le texte d'un document Word"""
+        """Extraction depuis Word"""
         try:
-            logger.debug("Début d'extraction depuis Word")
             doc = Document(file)
-            text = "\n".join(p.text for p in doc.paragraphs if p.text.strip())
-            logger.debug(f"Texte extrait ({len(text)} caractères)")
+            text = "\n".join(
+                p.text for p in doc.paragraphs if p.text.strip()
+            )
             return text.strip(), False
         except Exception as e:
-            logger.error(f"Erreur Word: {str(e)}", exc_info=True)
+            logger.error(f"Erreur Word: {str(e)}")
             raise HTTPException(
                 status_code=422,
-                detail="Échec de l'extraction du document Word"
+                detail="Échec extraction Word"
             )
