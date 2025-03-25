@@ -357,3 +357,4 @@ can happen due to downloa...
 2025-03-25 15:56:14,715 - main - INFO - Requête GET http://127.0.0.1:8000/docs - Client: 127.0.0.1
 2025-03-25 15:56:14,727 - main - INFO - Réponse GET http://127.0.0.1:8000/docs - Statut: 200
 2025-03-25 15:56:15,421 - main - INFO - Requête GET http://127.0.0.1:8000/openapi.json - Client: 127.0.0.1
+2025-03-25 15:56:15,527 - main - INFO - Réponse GET http://127.0.0.1:8000/openapi.json - Statut: 200
