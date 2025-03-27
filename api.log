@@ -376,3 +376,62 @@ can happen due to downloa...
 2025-03-25 17:24:06,193 - app.api.endpoints.text_extraction - INFO - Traitement réussi en 3.71s
 2025-03-25 17:24:47,437 - app.api.endpoints.text_extraction - INFO - Début traitement: group_6_lenkeu_djache_prince_williams_tobou_kenne_nelly_rapport.pdf
 2025-03-25 17:24:47,490 - app.api.endpoints.text_extraction - INFO - Traitement réussi en 0.05s
+2025-03-25 20:09:48,070 - main - INFO - Démarrage de l'API
+2025-03-25 20:30:55,539 - app.api.endpoints.orientation - INFO - Début du traitement - Taille du texte: 296 caractères
+2025-03-25 20:30:55,550 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere - Taille du texte: 296 caractères
+2025-03-25 20:31:08,242 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-25 20:31:08,272 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": null,
+  "lastName": "Allemagne",
+  "telephone": "5876",
+  "email": null,
+  "preferredSubjects": "Lire les livres, Traduction, Anglais, Allemand, Math\u00e9matiques, Fran\u00e7ais, Science humaine, Sciences humaines",
+  "fee": {
+    "formation": {
+      "min": 70000,
+      "max": 70000
+    },
+    "logement": {
+      "min": null,
+      "max": null
+    }
+  },
+  "address": {
+    "city": null,
+    "region": "Allemagne",
+    "country": "Allemagne"
+  },
+  "skills": "Bureau",
+  "desiredFocus": null,
+  "previousExperience": "Non"
+}
+2025-03-25 20:31:08,273 - app.api.endpoints.orientation - INFO - Traitement réussi
+2025-03-25 20:33:40,468 - app.api.endpoints.orientation - INFO - Début du traitement - Taille du texte: 296 caractères
+2025-03-25 20:33:40,471 - app.services.cohere_service - INFO - Envoi d'une requête à Cohere - Taille du texte: 296 caractères
+2025-03-25 20:34:28,654 - httpx - INFO - HTTP Request: POST https://api.cohere.com/v1/generate "HTTP/1.1 200 OK"
+2025-03-25 20:34:28,673 - app.services.text_processing - INFO - Parsing réussi: {
+  "firstName": null,
+  "lastName": "ma souffrance",
+  "telephone": "5876",
+  "email": null,
+  "preferredSubjects": "litt\u00e9rature, histoire, anglais, allemand, math\u00e9matiques, fran\u00e7ais, sciences humaines",
+  "fee": {
+    "formation": {
+      "min": 70000,
+      "max": 70000
+    },
+    "logement": {
+      "min": null,
+      "max": null
+    }
+  },
+  "address": {
+    "city": "null",
+    "region": "Allemagne",
+    "country": "Allemagne"
+  },
+  "skills": "traducteur",
+  "desiredFocus": "enseignement",
+  "previousExperience": "aucun"
+}
+2025-03-25 20:34:28,692 - app.api.endpoints.orientation - INFO - Traitement réussi
